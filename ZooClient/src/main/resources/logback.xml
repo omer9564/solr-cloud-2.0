@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--    those are simple appenders for example-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_BASE_SIZE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                logs/test.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxFileSize>1MB</maxFileSize>
+            <totalSizeCap>10MB</totalSizeCap>
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <!--    those loggers will activate logs for all com.* packages-->
+    <logger name="com" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="com" level="debug" additivity="false">
+        <appender-ref ref="ROLLING_BASE_SIZE"/>
+    </logger>
+
+    <!--
+        uncomment this to show all logs of org.apache.zookeeper.*
+    <logger name="org.apache.zookeeper" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>-->
+
+    <!--
+        uncomment this to show all logs of org.apache.curator.*
+    <logger name="org.apache.curator" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>-->
+
+</configuration>
