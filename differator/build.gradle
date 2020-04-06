@@ -14,4 +14,5 @@ repositories {
 dependencies {
     implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.5.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.1'
+    implementation group: 'org.json', name: 'json', version: '20190722'
 }
