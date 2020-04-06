@@ -26,11 +26,11 @@
     </appender>
 
     <!--    those loggers will activate logs for all com.* packages-->
-    <logger name="com" level="debug" additivity="false">
+    <logger name="org.apache.zookeeper" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="com" level="debug" additivity="false">
+    <logger name="org.apache.zookeeper" level="debug" additivity="false">
         <appender-ref ref="ROLLING_BASE_SIZE"/>
     </logger>
 
