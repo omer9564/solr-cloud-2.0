@@ -1,0 +1,1 @@
+# solr-cloud-2.0
