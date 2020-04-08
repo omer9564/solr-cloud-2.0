@@ -1,0 +1,38 @@
+{
+  "serverURL": "http://localhost:8080",
+  "farms": [
+    {
+      "name": "farm_name",
+      "zkHost": "host:port"
+    },
+    {
+      "name": "farm_name2",
+      "zkHost": "host2:port"
+    }
+  ],
+  "SolrInfo":{
+    "addFilterSteps":["Filter Property","Filter Operator"],
+    "filterProps":{
+      "CPU":{
+        "type":"number",
+        "allowedOperators":[">","<","=",">=","<=","!="]
+      },
+      "RAM":{
+        "type":"number",
+        "allowedOperators":[">","<","=",">=","<=","!="]
+      },
+      "name":{
+        "type":"search",
+        "allowedOperators":["regex","=","!="]
+      }
+    },
+    "filterTypes":{
+      "number":{
+        "default":0
+      },
+      "search":{
+        "default":""
+      }
+    }
+  }
+}
