@@ -8,6 +8,43 @@ import axios from "axios";
 import config from "../Config"
 import SolrInfo from "./SolrInfo";
 import TabPanel from "../components/TabPanel";
+import log from "loglevel"
+import remote from "loglevel-plugin-remote"
+
+const customJSON = log => ({
+    msg: log.message,
+    level: log.level.label,
+    stacktrace: log.stacktrace ? log.stacktrace : null,
+    timestamp: log.timestamp,
+});
+
+const defaults = {
+    url: '/logger',
+    method: 'POST',
+    headers: {},
+    token: '',
+    onUnauthorized: failedToken => {},
+    timeout: 0,
+    interval: 10000,
+    level: 'trace',
+    backoff: {
+        multiplier: 2,
+        jitter: 0.1,
+        limit: 30000,
+    },
+    capacity: 500,
+    stacktrace: {
+        levels: ['trace', 'warn', 'error'],
+        depth: 3,
+        excess: 0,
+    },
+    timestamp: () => new Date().toISOString(),
+    format: customJSON,
+};
+
+remote.apply(log, defaults);
+
+log.enableAll();
 
 const useStyles = theme => ({
     root: {
@@ -53,6 +90,7 @@ class Root extends React.Component {
 
     getCol = async (farmIndex) => {
         const farm = this.state.farms[farmIndex];
+        log.info(`Sending GET request to ${config.serverURL}/collections?farm?=${farm.name}&zkHost=${farm.zkHost}`);
         if (farm.isLoadingCollections !== 1) {
             const currentFarms = this.state.farms;
             currentFarms[farmIndex].isLoadingCollections = 1;
@@ -66,11 +104,13 @@ class Root extends React.Component {
                 },
                 headers: {'Access-Control-Allow-Origin': '*'}
             }).then(response => {
+                log.info(`Received OK response from server:${JSON.stringify(response.data)}`);
             return response.data
         }).catch(error => {
             if (error.response) {
                 alert(error.response.data)
             }
+            log.error(`Received error response from server:${JSON.stringify(error.response.data)}`);
             return []
         });
         const tempFarms = this.state.farms;

@@ -1,5 +1,5 @@
 {
-  "serverURL": "http://localhost:8080",
+  "serverURL": "http://localhost",
   "farms": [
     {
       "name": "farm_name",
