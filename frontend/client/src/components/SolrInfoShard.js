@@ -7,7 +7,7 @@ import {ExpandLess, ExpandMore} from "@material-ui/icons";
 import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
 import Box from "@material-ui/core/Box";
-import SolrInfoReplicaContainer from "../containers/SolrInfoReplicaContainer";
+import SolrInfoReplicaContainer from "../containers/SolrInfo/SolrInfoReplicaContainer";
 
 const stateColor = {
     active_leader: {

@@ -6,6 +6,7 @@ import WarningIcon from "@material-ui/icons/Warning";
 
 function LoadingStatus(props) {
     const {isLoading,onRefresh,onRefreshArgs,componentStyle} = props;
+    const onRefreshArgsFixed = onRefreshArgs ? onRefreshArgs : [];
     switch(isLoading){
         case 1:
             return (<div style={componentStyle}>
@@ -16,20 +17,20 @@ function LoadingStatus(props) {
             </div>);
         case -1:
             return (<div style={componentStyle}>
-                <IconButton onClick={()=>onRefresh(...onRefreshArgs)}>
+                <IconButton onClick={()=>onRefresh(...onRefreshArgsFixed)}>
                     <WarningIcon color="secondary" fontSize="large" />
                     <RefreshIcon fontSize="large"/>
                 </IconButton>
             </div>);
         case 0:
             return (<div style={componentStyle}>
-                <IconButton onClick={()=>onRefresh(...onRefreshArgs)}>
+                <IconButton onClick={()=>onRefresh(...onRefreshArgsFixed)}>
                     <RefreshIcon fontSize="large"/>
                 </IconButton>
             </div>);
         default:
             return (<div style={componentStyle}>
-                <IconButton onClick={()=>onRefresh(...onRefreshArgs)}>
+                <IconButton onClick={()=>onRefresh(...onRefreshArgsFixed)}>
                     <RefreshIcon fontSize="large"/>
                 </IconButton>
             </div>);

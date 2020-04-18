@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItemText from "@material-ui/core/ListItemText";
-import {ExpandLess, ExpandMore} from "@material-ui/icons";
-import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem/index";
+import ListItemIcon from "@material-ui/core/ListItemIcon/index";
+import Checkbox from "@material-ui/core/Checkbox/index";
+import ListItemText from "@material-ui/core/ListItemText/index";
+import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
+import List from "@material-ui/core/List/index";
 import SolrInfoReplicaContainer from "./SolrInfoReplicaContainer";
-import Box from "@material-ui/core/Box";
+import Box from "@material-ui/core/Box/index";
 
 
 const stateColor = {
@@ -55,37 +55,65 @@ export default class SolrInfoShardContainer extends Component {
         this.replicasRefs = []
     }
 
-    onClickExpandShard = (newValue) => {
-        this.setState({isOpen: newValue})
+    sleep = (time) => {
+        return new Promise((resolve => setTimeout(resolve, time)))
 
     };
 
-    onClickCheckShard = (toCheckAll, newValue) => {
+
+//#region checkShardManagement
+    onClickCheckShard = async (toCheckAll, newValue) => {
+        console.log(this.props.shard.name);
         if (newValue !== this.state.isChecked) {
+            let results;
             if (toCheckAll) {
-                Object.keys(this.replicasRefs).map((key) => (
+                this.checkAll = toCheckAll;
+                results = Object.keys(this.replicasRefs).map(async (key) => (
                     this.replicasRefs[key].onClickCheck(toCheckAll, newValue)
                 ));
                 this.checkShard(toCheckAll, newValue)
-            }
-            else {
-                Object.keys(this.replicasRefs).map((key) => (
+            } else {
+                results = Object.keys(this.replicasRefs).map(async (key) => (
                     this.replicasRefs[key].onClickCheck(toCheckAll, newValue)
                 ));
             }
+            Promise.all(results).then(()=> console.log(this.props.shard.name + "Finished replicas"))
         }
     };
 
     checkShard = (toCheckAll, newValue) => {
         if (toCheckAll) {
-            this.setState({isChecked: newValue})
-        }
-        else {
+            this.setState({isChecked: newValue});
+            console.log(this.props.shard.name + " render")
+        } else {
             this.setState({isChecked: newValue}, () => {
                 this.props.isAllChecked() ? this.props.actionBarRef.checkAll(true) : this.props.actionBarRef.checkAll(false);
             });
         }
     };
+
+    isAllChecked = () => {
+        return Object.keys(this.replicasRefs).reduce((reps, replica) => reps && this.replicasRefs[replica].state.isChecked, true);
+    };
+//#endregion
+
+//#region expandShardManagement
+    onClickExpandShard = (toExpandAll, newValue) => {
+        if (newValue !== this.state.isOpen) {
+            this.expandShard(toExpandAll,newValue)
+        }
+    };
+
+    expandShard = (toExpandAll, newValue) => {
+        if (toExpandAll) {
+            this.setState({isOpen: newValue});
+        } else {
+            this.setState({isOpen: newValue}, () => {
+                this.props.isAllExpanded() ? this.props.actionBarRef.expandAll(true) : this.props.actionBarRef.expandAll(false);
+            })
+        }
+    };
+//#endregion
 
     setReplicaRef = (replica) => {
         if (replica) {
@@ -94,12 +122,8 @@ export default class SolrInfoShardContainer extends Component {
         }
     };
 
-    isAllChecked = () => {
-        return Object.keys(this.replicasRefs).reduce((reps, replica) => reps && this.replicasRefs[replica].state.isChecked, true);
-    };
-
     render() {
-        const {shard, isAllChecked, actionBarRef} = this.props;
+        const {shard} = this.props;
         const leaderInfo = shard.replicas.filter(replica => replica.leader === true);
         const itemStyle = leaderInfo.length > 0 ? stateColor[`${leaderInfo[0].state}_leader`] : stateColor[`down_leader`];
         return (
@@ -126,11 +150,11 @@ export default class SolrInfoShardContainer extends Component {
                                   primaryTypographyProps={itemStyle}
                                   onClick={() => this.onClickCheckShard(false, !this.state.isChecked)}/>
                     {this.state.isOpen ? <ExpandLess key={`ShardItemExpand-${shard.name}`}
-                                                     onClick={() => this.onClickExpandShard(!this.state.isOpen)}/> :
+                                                     onClick={() => this.onClickExpandShard(false,!this.state.isOpen)}/> :
                         <ExpandMore key={`ShardItemExpand-${shard.name}`}
-                                    onClick={() => this.onClickExpandShard(!this.state.isOpen)}/>}
+                                    onClick={() => this.onClickExpandShard(false,!this.state.isOpen)}/>}
                 </ListItem>
-                <List style={{paddingLeft: '20px',display:`${this.state.isOpen ? 'block' : 'none'}`}}>
+                <List style={{paddingLeft: '20px', display: `${this.state.isOpen ? 'block' : 'none'}`}}>
                     {shard.replicas.map((replica) => {
                         return (
                             <SolrInfoReplicaContainer key={replica.replica}

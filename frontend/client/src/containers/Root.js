@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import axios from "axios";
 import config from "../Config"
-import SolrInfo from "./SolrInfo";
+import SolrInfo from "./SolrInfo/SolrInfo";
 import TabPanel from "../components/TabPanel";
 import log from "loglevel"
 import remote from "loglevel-plugin-remote"
@@ -63,6 +63,7 @@ const useStyles = theme => ({
     },
     tabPanel: {
         height: '100%',
+        overflow:"auto"
     },
     tabPanelBox: {
         height: '100%',
@@ -83,11 +84,13 @@ class Root extends React.Component {
         };
     }
 
+//#region LifeCycle Methods
     componentDidMount() {
         this.state.farms.map((farm, farmIndex) => this.getCol(farmIndex))
     }
+//#endregion
 
-
+//#region getCollectionsFromServer
     getCol = async (farmIndex) => {
         const farm = this.state.farms[farmIndex];
         log.info(`Sending GET request to ${config.serverURL}/collections?farm?=${farm.name}&zkHost=${farm.zkHost}`);
@@ -118,12 +121,11 @@ class Root extends React.Component {
         tempFarms[farmIndex].isLoadingCollections = collectionsResponse.length !== 0 ? 0 : -1;
         this.setState({farms: tempFarms});
     };
-
+//#endregion
 
     handleChange = (event, newValue) => {
         this.setState({currentTab: newValue});
     };
-
 
     render() {
         const {classes} = this.props;

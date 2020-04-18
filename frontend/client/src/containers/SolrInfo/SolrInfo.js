@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import config from "../Config"
-import SolrInfoForm from "../components/SolrInfoForm";
+import config from "../../Config"
+import SolrInfoForm from "../../components/SolrInfo/SolrInfoForm";
 import SolrInfoWindow from "./SolrInfoWindow";
 
 
@@ -11,10 +11,11 @@ export default class SolrInfo extends Component {
             currentFarm: 0,
             currentCollection: 0,
             filters: []
-        }
+        };
+        this.windowRef = React.createRef()
     }
 
-
+//#region StaticFilterManagement
     onChangeFarm = event => {
         const newFarmIndex = event.currentTarget.id.split('-')[1];
         this.setState({currentFarm: newFarmIndex, currentCollection: 0})
@@ -24,7 +25,9 @@ export default class SolrInfo extends Component {
         const newCollectionIndex = event.currentTarget.id.split('-')[1];
         this.setState({currentCollection: newCollectionIndex});
     };
+//#endregion
 
+//#region DynamicFilterManagement
     onAddFilter = (filterProp, filterOperator) => {
         const filterType = config.SolrInfo.filterProps[filterProp].type;
         const defaultFilterInput = config.SolrInfo.filterTypes[filterType].default;
@@ -46,23 +49,33 @@ export default class SolrInfo extends Component {
         })
     };
 
+    onChangeFilter = (filterIndex, e) => {
+        const tempFilters = this.state.filters;
+        tempFilters[filterIndex].filterInput = e.target.value;
+        this.setState({filters: tempFilters})
+    };
+
+    onSubmitFilters = (filters) =>{
+        this.setState({filters:[].concat(filters)})
+    };
+
+//#endregion
+
     render() {
         const {farms, onRefreshCollection} = this.props;
+        console.log(this.state.filters);
         return (
             <div key="SolrInfo" style={{display: "flex", flexDirection: "row", height: "100%"}}>
                 <SolrInfoForm farms={farms} currentFarm={this.state.currentFarm} onChangeFarm={this.onChangeFarm}
                               currentCollection={this.state.currentCollection}
                               onChangeCollection={this.onChangeCollection}
                               onRefreshCollection={onRefreshCollection}
-                              filters={this.state.filters}
-                              onAddFilter={this.onAddFilter}
-                              onDeleteFilter={this.onDeleteFilter}/>
+                              onSubmitFilters={this.onSubmitFilters}/>
                 {farms[this.state.currentFarm].collections.length !== 0 ?
                     <SolrInfoWindow farm={farms[this.state.currentFarm]}
-                                    collection={farms[this.state.currentFarm].collections[this.state.currentCollection]}/> :
+                                    collection={farms[this.state.currentFarm].collections[this.state.currentCollection]}
+                                    filters={this.state.filters}/> :
                     'Waiting for input'}
-                {/*<SolrInfoWindow farm={farms[this.state.currentFarm]} collectionIndex={this.state.currentCollection}/>*/}
-
             </div>
         )
     }

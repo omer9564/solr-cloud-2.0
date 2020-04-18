@@ -24,6 +24,10 @@
       "name":{
         "type":"search",
         "allowedOperators":["regex","=","!="]
+      },
+      "leader": {
+        "type": "boolSelect",
+        "allowedOperators": ["bool"]
       }
     },
     "filterTypes":{
@@ -32,6 +36,10 @@
       },
       "search":{
         "default":""
+      },
+      "boolSelect": {
+        "default": "true",
+        "options": [true, false]
       }
     }
   }

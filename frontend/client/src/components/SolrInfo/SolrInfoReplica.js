@@ -1,12 +1,12 @@
 import React from 'react'
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItemText from "@material-ui/core/ListItemText";
-import {ExpandLess, ExpandMore} from "@material-ui/icons";
-import Collapse from "@material-ui/core/Collapse";
-import List from "@material-ui/core/List";
-import Box from "@material-ui/core/Box";
+import ListItem from "@material-ui/core/ListItem/index";
+import ListItemIcon from "@material-ui/core/ListItemIcon/index";
+import Checkbox from "@material-ui/core/Checkbox/index";
+import ListItemText from "@material-ui/core/ListItemText/index";
+import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
+import Collapse from "@material-ui/core/Collapse/index";
+import List from "@material-ui/core/List/index";
+import Box from "@material-ui/core/Box/index";
 
 const stateColor = {
     active_leader: {

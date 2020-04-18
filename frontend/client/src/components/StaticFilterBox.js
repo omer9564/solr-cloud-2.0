@@ -20,7 +20,7 @@ const useStyles = theme => ({
 });
 
 
-function FilterBox(props) {
+function StaticFilterBox(props) {
     const {classes, filterName, filterOptions, currentFilterOption, isLoading, onChange,onRefresh,onRefreshArgs} = props;
     return (
         <Box border={1} margin="5px" style={{display: "flex", flexDirection: "row",justifyContent:"space-between",alignItems:"center",height:"70px"}}>
@@ -53,4 +53,4 @@ function FilterBox(props) {
     )
 }
 
-export default withStyles(useStyles)(FilterBox)
+export default withStyles(useStyles)(StaticFilterBox)

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import SolrInfoReplica from "../components/SolrInfoReplica";
+import SolrInfoReplica from "../../components/SolrInfo/SolrInfoReplica";
 
 export default class SolrInfoReplicaContainer extends Component {
     constructor(props) {
@@ -7,7 +7,8 @@ export default class SolrInfoReplicaContainer extends Component {
         this.state = {
             isOpen: false,
             isChecked: false
-        }
+        };
+        this.checkAll = false;
     }
 
     onClickExpand = () => {
@@ -15,14 +16,26 @@ export default class SolrInfoReplicaContainer extends Component {
 
     };
 
-    onClickCheck = (toCheckAll,newValue) => {
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        const oldActionOnAll = this.checkAll;
+        this.checkAll = false;
+        return !oldActionOnAll && (this.state !== nextState || this.props !== nextProps);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+
+    }
+
+    onClickCheck = async (toCheckAll, newValue) => {
         if (newValue !== this.state.isChecked) {
             if (toCheckAll) {
-                this.setState({isChecked: newValue})
-            }
-            else {
+                this.checkAll = toCheckAll;
+                this.setState({isChecked: newValue});
+                console.log(this.props.replica.replica + 'finished');
+                this.checkAll = !toCheckAll;
+            } else {
                 this.setState({isChecked: newValue}, () => {
-                    this.props.isAllChecked() ? this.props.checkShard(toCheckAll,true) : this.props.checkShard(toCheckAll,false);
+                    this.props.isAllChecked() ? this.props.checkShard(toCheckAll, true) : this.props.checkShard(toCheckAll, false);
                 })
             }
         }
@@ -30,7 +43,7 @@ export default class SolrInfoReplicaContainer extends Component {
 
 
     render() {
-        const {replica,checkShard} = this.props;
+        const {replica} = this.props;
         return (
             <div>
                 <SolrInfoReplica key={replica.replica}
