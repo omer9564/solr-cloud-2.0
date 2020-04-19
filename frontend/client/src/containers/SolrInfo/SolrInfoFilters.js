@@ -63,7 +63,7 @@ export default class SolrInfoFilters extends React.Component {
                                       onChange={this.handleChangeFilter}/>
                 )
             })}
-            <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+            <div style={{display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
                 <FormDialog buttonTitle="Add Filter" dialogContent="Choose parameters to filter">
                     <AddFilterDialog onAddFilter={this.handleAddFilter}/>
                 </FormDialog>

@@ -176,6 +176,12 @@ class SolrInfoWindow extends React.Component {
     isAllChecked = () => {
         return Object.keys(this.shardsRefs).reduce((shards, shard) => shards && this.shardsRefs[shard].state.isChecked, true);
     };
+
+    getCheckedShardsReplicas = () => {
+        const checkedReplicas = Object.keys(this.shardsRefs).map((shard) => this.shardsRefs[shard].getCheckedReplicas()).flat()
+        console.log(checkedReplicas);
+        alert(JSON.stringify(checkedReplicas));
+    };
 //#endregion
 
 //#region expandAll
@@ -191,6 +197,7 @@ class SolrInfoWindow extends React.Component {
     };
 //#endregion
 
+//#region FilterManagement
     checkIsFilteredReplica = (replica) => {
         let isFilteredReplica = true;
         this.props.filters.forEach((filter) => {
@@ -219,6 +226,7 @@ class SolrInfoWindow extends React.Component {
         });
         return filteredShards
     };
+//#endregion
 
     render() {
         console.log('render');
@@ -248,7 +256,7 @@ class SolrInfoWindow extends React.Component {
                 <SolrInfoActionBarContainer key="SolrInfoActionBarC" ref={(node) => {
                     this.actionBarRef = node
                 }} isLoading={this.state.isLoadingShards} onRefresh={this.refreshSolrInfoWindow}
-                                            checkAll={this.checkAll} expandAll={this.expandAll}/>
+                                            checkAll={this.checkAll} expandAll={this.expandAll} onClickButton={this.getCheckedShardsReplicas}/>
             </div>
         )
     }

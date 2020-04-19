@@ -77,7 +77,7 @@ export default class SolrInfoShardContainer extends Component {
                     this.replicasRefs[key].onClickCheck(toCheckAll, newValue)
                 ));
             }
-            Promise.all(results).then(()=> console.log(this.props.shard.name + "Finished replicas"))
+            Promise.all(results).then(() => console.log(this.props.shard.name + "Finished replicas"))
         }
     };
 
@@ -95,12 +95,18 @@ export default class SolrInfoShardContainer extends Component {
     isAllChecked = () => {
         return Object.keys(this.replicasRefs).reduce((reps, replica) => reps && this.replicasRefs[replica].state.isChecked, true);
     };
+
+    getCheckedReplicas = () => {
+        return Object.keys(this.replicasRefs).filter((replica) => this.replicasRefs[replica].getState("isChecked")).map(
+            (replica) => this.replicasRefs[replica].props.replica)
+
+    };
 //#endregion
 
 //#region expandShardManagement
     onClickExpandShard = (toExpandAll, newValue) => {
         if (newValue !== this.state.isOpen) {
-            this.expandShard(toExpandAll,newValue)
+            this.expandShard(toExpandAll, newValue)
         }
     };
 
@@ -150,9 +156,9 @@ export default class SolrInfoShardContainer extends Component {
                                   primaryTypographyProps={itemStyle}
                                   onClick={() => this.onClickCheckShard(false, !this.state.isChecked)}/>
                     {this.state.isOpen ? <ExpandLess key={`ShardItemExpand-${shard.name}`}
-                                                     onClick={() => this.onClickExpandShard(false,!this.state.isOpen)}/> :
+                                                     onClick={() => this.onClickExpandShard(false, !this.state.isOpen)}/> :
                         <ExpandMore key={`ShardItemExpand-${shard.name}`}
-                                    onClick={() => this.onClickExpandShard(false,!this.state.isOpen)}/>}
+                                    onClick={() => this.onClickExpandShard(false, !this.state.isOpen)}/>}
                 </ListItem>
                 <List style={{paddingLeft: '20px', display: `${this.state.isOpen ? 'block' : 'none'}`}}>
                     {shard.replicas.map((replica) => {

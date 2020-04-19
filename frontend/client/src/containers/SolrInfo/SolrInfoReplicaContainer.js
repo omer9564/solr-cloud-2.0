@@ -41,6 +41,9 @@ export default class SolrInfoReplicaContainer extends Component {
         }
     };
 
+    getState = (key) => {
+        return this.state[key]
+    };
 
     render() {
         const {replica} = this.props;
