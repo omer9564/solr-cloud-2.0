@@ -111,9 +111,11 @@ class Root extends React.Component {
             return response.data
         }).catch(error => {
             if (error.response) {
-                alert(error.response.data)
+                alert(error.response.data);
+                log.error(`Received error response from server:${JSON.stringify(error.response.data)}`);
+            } else {
+                log.error(`Received error response from server:${JSON.stringify(error.response)}`);
             }
-            log.error(`Received error response from server:${JSON.stringify(error.response.data)}`);
             return []
         });
         const tempFarms = this.state.farms;

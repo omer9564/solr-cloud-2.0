@@ -12,7 +12,7 @@ const useStyles = theme => ({
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
-        width:"65%"
+        width: "65%"
     },
     selectEmpty: {
         marginTop: theme.spacing(2),
@@ -21,9 +21,15 @@ const useStyles = theme => ({
 
 
 function StaticFilterBox(props) {
-    const {classes, filterName, filterOptions, currentFilterOption, isLoading, onChange,onRefresh,onRefreshArgs} = props;
+    const {classes, filterName, filterOptions, currentFilterOption, isLoading, onChange, onRefresh, onRefreshArgs} = props;
     return (
-        <Box border={1} margin="5px" style={{display: "flex", flexDirection: "row",justifyContent:"space-between",alignItems:"center",height:"70px"}}>
+        <Box border={1} margin="5px" style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            height: "70px"
+        }}>
             <FormControl className={classes.formControl}>
                 <InputLabel shrink id={"filter-" + {filterName}}>
                     {filterName}
@@ -48,7 +54,9 @@ function StaticFilterBox(props) {
                         })}
                 </Select>
             </FormControl>
-            <LoadingStatus isLoading={isLoading} onRefresh={onRefresh} onRefreshArgs={onRefreshArgs} componentStyle={{width:"30%",display:"flex",justifyContent:"flex-end"}}/>
+            {onRefresh && <LoadingStatus isLoading={isLoading} onRefresh={onRefresh} onRefreshArgs={onRefreshArgs}
+                                        componentStyle={{width: "30%", display: "flex", justifyContent: "flex-end"}}/>}
+
         </Box>
     )
 }
