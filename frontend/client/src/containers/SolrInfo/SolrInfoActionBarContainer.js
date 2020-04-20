@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import Checkbox from "@material-ui/core/Checkbox/index";
 import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
 import IconButton from "@material-ui/core/IconButton/index";
-import LoadingStatus from "../../components/LoadingStatus";
 import Button from "@material-ui/core/Button";
+import LoadingStatus from "../../components/LoadingStatus";
+import {Box} from "@material-ui/core";
 
 export default class SolrInfoActionBarContainer extends Component {
     constructor(props) {

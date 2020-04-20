@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import config from "../../Config"
 import SolrInfoForm from "../../components/SolrInfo/SolrInfoForm";
 import SolrInfoWindow from "./SolrInfoWindow";
 
@@ -28,32 +27,6 @@ export default class SolrInfo extends Component {
 //#endregion
 
 //#region DynamicFilterManagement
-    onAddFilter = (filterProp, filterOperator) => {
-        const filterType = config.SolrInfo.filterProps[filterProp].type;
-        const defaultFilterInput = config.SolrInfo.filterTypes[filterType].default;
-        this.setState({
-            filters: [...this.state.filters, {
-                filterProp: filterProp,
-                filterType: filterType,
-                filterOperator: filterOperator,
-                filterInput: defaultFilterInput
-            }]
-        })
-    };
-
-    onDeleteFilter = (filterIndex) => {
-        const tempFilters = this.state.filters;
-        tempFilters.splice(filterIndex, 1);
-        this.setState({
-            filters: tempFilters
-        })
-    };
-
-    onChangeFilter = (filterIndex, e) => {
-        const tempFilters = this.state.filters;
-        tempFilters[filterIndex].filterInput = e.target.value;
-        this.setState({filters: tempFilters})
-    };
 
     onSubmitFilters = (filters) =>{
         this.setState({filters:[].concat(filters)})

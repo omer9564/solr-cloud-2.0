@@ -1,9 +1,9 @@
 import React from 'react'
+import config from "../../Config";
+import Button from "@material-ui/core/Button";
 import AddFilterDialog from "../AddFilterDialog";
 import FormDialog from "../FormDialog";
-import config from "../../Config";
 import DynamicFilterBox from "../../components/DynamicFilterBox";
-import Button from "@material-ui/core/Button";
 
 
 export default class SolrInfoFilters extends React.Component {
@@ -15,7 +15,6 @@ export default class SolrInfoFilters extends React.Component {
     }
 
     handleAddFilter = (filterProp, filterOperator) => {
-
         const filterType = config.SolrInfo.filterProps[filterProp].type;
         const defaultFilterInput = config.SolrInfo.filterTypes[filterType].default;
         this.setState({

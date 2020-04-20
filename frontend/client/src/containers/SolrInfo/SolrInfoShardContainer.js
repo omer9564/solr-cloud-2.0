@@ -5,8 +5,8 @@ import Checkbox from "@material-ui/core/Checkbox/index";
 import ListItemText from "@material-ui/core/ListItemText/index";
 import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
 import List from "@material-ui/core/List/index";
-import SolrInfoReplicaContainer from "./SolrInfoReplicaContainer";
 import Box from "@material-ui/core/Box/index";
+import SolrInfoReplicaContainer from "./SolrInfoReplicaContainer";
 
 
 const stateColor = {
@@ -147,7 +147,6 @@ export default class SolrInfoShardContainer extends Component {
                             edge="start"
                             color="primary"
                             checked={this.state.isChecked}
-                            // checked={shard.replicas.reduce((reps, replica) => reps && !!replica.checked, true)}
                             tabIndex={-1}
                             disableRipple
                         />

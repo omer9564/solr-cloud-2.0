@@ -1,20 +1,17 @@
 {
-  "name": "example-create-react-app-express",
+  "name": "solr-cloud-2.0.backend.demo",
   "version": "1.0.0",
-  "description": "Example on using create-react-app with a Node Express Backend",
+  "description": "SolrCloud2.0 demo Backend",
   "author": {
-    "name": "Esau Silva",
-    "twitter": "@_esausilva",
-    "url": "https://esausilva.com"
+    "name": "Omer Zuarets"
   },
-  "license": "MIT",
   "scripts": {
     "client": "cd client && yarn start",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "dev:server": "cd client && yarn build && cd .. && yarn start",
     "start": "node server.js",
-    "heroku-postbuild": "yarn install && yarn install --only=dev --no-shrinkwrap && cd client && yarn install && yarn install --only=dev --no-shrinkwrap && npm run build"
+    "postinstall": "cd client && yarn install"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.6.1",
@@ -26,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/esausilva/example-create-react-app-express.git"
+    "url": "https://github.com/Holo3146-Myuri/solr-cloud-2.0.git"
   },
   "bugs": {
     "url": "https://github.com/esausilva/example-create-react-app-express/issues"

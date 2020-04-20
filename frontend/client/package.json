@@ -1,5 +1,5 @@
 {
-  "name": "mvp.client",
+  "name": "solr-cloud-2.0.frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

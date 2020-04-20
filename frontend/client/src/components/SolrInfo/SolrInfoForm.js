@@ -1,13 +1,11 @@
 import React from 'react';
 import StaticFilterBox from "../StaticFilterBox";
-import Box from "@material-ui/core/Box/index";
 import SolrInfoFilters from "../../containers/SolrInfo/SolrInfoFilters";
 
 function SolrInfoForm(props) {
     const {
         farms, currentFarm, onChangeFarm, currentCollection, onChangeCollection,
-        onRefreshCollection, onSubmitFilters
-    } = props;
+        onRefreshCollection, onSubmitFilters} = props;
     return (
         <div className="TabForm">
             <StaticFilterBox filterName="Farm" filterOptions={farms.map(farm => farm.name)}

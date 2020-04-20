@@ -2,7 +2,6 @@ import React from 'react'
 import config from "../Config"
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import FormControl from "@material-ui/core/FormControl/FormControl";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 
 class AddFilterDialog extends React.Component {

@@ -4,19 +4,8 @@ import config from "../../Config";
 import List from "@material-ui/core/List/index";
 import SolrInfoShardContainer from "./SolrInfoShardContainer";
 import SolrInfoActionBarContainer from "./SolrInfoActionBarContainer";
+import {Box} from "@material-ui/core";
 
-
-const useStyles = theme => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-});
 
 const operators = {
     "+": function (a, b) {
@@ -35,13 +24,13 @@ const operators = {
         return a <= b
     },
     "=": function (a, b) {
-        return a == b
+        return a === b
     },
     "!=": function (a, b) {
-        return a != b
+        return a !== b
     },
     "bool": function (a, b) {
-        return a === (b == "true")
+        return a === b
     }
 };
 
@@ -94,33 +83,22 @@ class SolrInfoWindow extends React.Component {
     refreshSolrInfoWindow = async () => {
         this.shardsRefs = {};
         this.actionBarRef.checkAll(false);
-        if (this.state.isLoadingShards !== 1) {
-            this.setState({isLoadingShards: 1}, async () => {
-                const shardsResponse = await this.getCollectionShards();
-                const responseLoadingStatus = shardsResponse.length !== 0 ? 0 : -1;
-                const sortedShardsResponse = shardsResponse.sort((this.sortByProperty("name")));
-                const filteredShards = this.getFilteredShards(sortedShardsResponse);
-                this.setState({
-                    shards: sortedShardsResponse,
-                    filteredShards: filteredShards,
-                    isLoadingShards: responseLoadingStatus
-                });
-            })
-        } else {
+        if (this.state.isLoadingShards === 1) {
             this.source.cancel('Operation canceled by user');
             await this.sleep(100);
-            this.setState({isLoadingShards: 1}, async () => {
-                const shardsResponse = await this.getCollectionShards();
-                const responseLoadingStatus = shardsResponse.length !== 0 ? 0 : -1;
-                const sortedShardsResponse = shardsResponse.sort((this.sortByProperty("name")));
-                const filteredShards = this.getFilteredShards(sortedShardsResponse);
-                this.setState({
-                    shards: sortedShardsResponse,
-                    filteredShards: filteredShards,
-                    isLoadingShards: responseLoadingStatus
-                });
-            })
         }
+        this.setState({isLoadingShards: 1}, async () => {
+            const shardsResponse = await this.getCollectionShards();
+            const responseLoadingStatus = shardsResponse.length !== 0 ? 0 : -1;
+            const sortedShardsResponse = shardsResponse.sort((this.sortByProperty("name")));
+            const filteredShards = this.getFilteredShards(sortedShardsResponse);
+            this.setState({
+                shards: sortedShardsResponse,
+                filteredShards: filteredShards,
+                isLoadingShards: responseLoadingStatus
+            });
+        })
+
     };
 
     getCollectionShards = async () => {
@@ -178,7 +156,7 @@ class SolrInfoWindow extends React.Component {
     };
 
     getCheckedShardsReplicas = () => {
-        const checkedReplicas = Object.keys(this.shardsRefs).map((shard) => this.shardsRefs[shard].getCheckedReplicas()).flat()
+        const checkedReplicas = Object.keys(this.shardsRefs).map((shard) => this.shardsRefs[shard].getCheckedReplicas()).flat();
         console.log(checkedReplicas);
         alert(JSON.stringify(checkedReplicas));
     };
@@ -202,7 +180,7 @@ class SolrInfoWindow extends React.Component {
         let isFilteredReplica = true;
         this.props.filters.forEach((filter) => {
             const {filterProp, filterOperator, filterInput} = filter;
-            if (filterInput !== "" && !(operators[filterOperator](replica[filterProp], filterInput))) {
+            if (filterInput !== "" && !(operators[filterOperator](replica[filterProp].toString(), filterInput.toString()))) {
                 isFilteredReplica = false;
                 return isFilteredReplica;
             }
@@ -211,10 +189,10 @@ class SolrInfoWindow extends React.Component {
     };
 
     getFilteredShards = (shards) => {
-        let filteredShards = [];
-        shards.map((shard) => {
+        const filteredShards = [];
+        shards.forEach((shard) => {
             let filteredShard = {name: shard.name, replicas: []};
-            shard.replicas.map((replica) => {
+            shard.replicas.forEach((replica) => {
                 let isFilteredReplica = this.checkIsFilteredReplica(replica);
                 if (isFilteredReplica) {
                     filteredShard.replicas.push(replica);
@@ -226,6 +204,7 @@ class SolrInfoWindow extends React.Component {
         });
         return filteredShards
     };
+
 //#endregion
 
     render() {
@@ -242,7 +221,7 @@ class SolrInfoWindow extends React.Component {
                     height: "90%",
                     placeContent: "flex-start"
                 }}>
-                    {this.state.isLoadingShards === 0 ? this.state.filteredShards.map((shard) => {
+                    {this.state.isLoadingShards === 0 && this.state.filteredShards.map((shard) => {
                         return (
                             <SolrInfoShardContainer key={shard.name}
                                                     ref={this.setShardRef}
@@ -251,12 +230,13 @@ class SolrInfoWindow extends React.Component {
                                                     actionBarRef={this.actionBarRef}
                                                     shard={shard}/>
                         )
-                    }) : <div></div>}
+                    })}
                 </List>
                 <SolrInfoActionBarContainer key="SolrInfoActionBarC" ref={(node) => {
                     this.actionBarRef = node
                 }} isLoading={this.state.isLoadingShards} onRefresh={this.refreshSolrInfoWindow}
-                                            checkAll={this.checkAll} expandAll={this.expandAll} onClickButton={this.getCheckedShardsReplicas}/>
+                                            checkAll={this.checkAll} expandAll={this.expandAll}
+                                            onClickButton={this.getCheckedShardsReplicas}/>
             </div>
         )
     }

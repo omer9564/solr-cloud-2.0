@@ -1,15 +1,16 @@
 import React from 'react'
+import axios from "axios";
+import log from "loglevel"
+import remote from "loglevel-plugin-remote"
+import config from "../Config"
 import '../App.css';
 import withStyles from "@material-ui/core/styles/withStyles";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import axios from "axios";
-import config from "../Config"
 import SolrInfo from "./SolrInfo/SolrInfo";
 import TabPanel from "../components/TabPanel";
-import log from "loglevel"
-import remote from "loglevel-plugin-remote"
+import Box from "@material-ui/core/Box";
 
 const customJSON = log => ({
     msg: log.message,
@@ -132,7 +133,7 @@ class Root extends React.Component {
     render() {
         const {classes} = this.props;
         const value = this.state.currentTab;
-        return <div className={classes.root}>
+        return <div className="Root">
             <AppBar position="static" color="default" style={{height: "5vh", minHeight: "48px"}}>
                 <Tabs key={`Tab-${value}`}
                       value={value}
