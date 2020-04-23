@@ -28,8 +28,13 @@ class FormDialog extends React.Component {
     };
 
     handleSubmit = () => {
-        this.handleClose();
-        this.ref.onSubmit();
+        const submitStatus = this.ref.onSubmit();
+        if (submitStatus.isFinished){
+            this.handleClose();
+        }
+        else{
+            alert(submitStatus.message)
+        }
     };
 
     render() {

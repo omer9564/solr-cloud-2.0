@@ -130,7 +130,7 @@ export default class SolrInfoShardContainer extends Component {
 
     render() {
         const {shard} = this.props;
-        const leaderInfo = shard.replicas.filter(replica => replica.leader === true);
+        const leaderInfo = shard.replicas.filter(replica => replica.leader === "true");
         const itemStyle = leaderInfo.length > 0 ? stateColor[`${leaderInfo[0].state}_leader`] : stateColor[`down_leader`];
         return (
             <Box key={`ShardBox-${shard.name}`} borderRadius={16} border={1} m={1} boxShadow={5} height="fit-content"

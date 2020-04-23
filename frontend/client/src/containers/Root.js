@@ -10,7 +10,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import SolrInfo from "./SolrInfo/SolrInfo";
 import TabPanel from "../components/TabPanel";
-import Box from "@material-ui/core/Box";
+import ReIndexer from "./ReIndexer/ReIndexer";
 
 const customJSON = log => ({
     msg: log.message,
@@ -94,7 +94,7 @@ class Root extends React.Component {
 //#region getCollectionsFromServer
     getCol = async (farmIndex) => {
         const farm = this.state.farms[farmIndex];
-        log.info(`Sending GET request to ${config.serverURL}/collections?farm?=${farm.name}&zkHost=${farm.zkHost}`);
+        log.info(`Sending GET request to ${config.serverURL}/info?farm?=${farm.name}&solrFarm=${farm.solrFarm}`);
         if (farm.isLoadingCollections !== 1) {
             const currentFarms = this.state.farms;
             currentFarms[farmIndex].isLoadingCollections = 1;
@@ -106,11 +106,17 @@ class Root extends React.Component {
                     farm: farm.name,
                     zkHost: farm.zkHost
                 },
-                headers: {'Access-Control-Allow-Origin': '*'}
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                timeout: 5000
             }).then(response => {
                 log.info(`Received OK response from server:${JSON.stringify(response.data)}`);
             return response.data
         }).catch(error => {
+            console.log(error.code);
+            console.log(error.message);
+            console.log(error.stack);
             if (error.response) {
                 alert(error.response.data);
                 log.error(`Received error response from server:${JSON.stringify(error.response.data)}`);
@@ -129,7 +135,6 @@ class Root extends React.Component {
     handleChange = (event, newValue) => {
         this.setState({currentTab: newValue});
     };
-
     render() {
         const {classes} = this.props;
         const value = this.state.currentTab;
@@ -149,6 +154,10 @@ class Root extends React.Component {
             <TabPanel className={classes.tabPanel} boxClass={classes.tabPanelBox} value={value} index={0}
                       tab="SolrInfo">
                 <SolrInfo value={value} farms={this.state.farms} onRefreshCollection={this.getCol}/>
+            </TabPanel>
+            <TabPanel className={classes.tabPanel} boxClass={classes.tabPanelBox} value={value} index={1}
+                      tab="SolrInfo">
+                <ReIndexer value={value} farms={this.state.farms} onRefreshCollection={this.getCol}/>
             </TabPanel>
         </div>;
     }

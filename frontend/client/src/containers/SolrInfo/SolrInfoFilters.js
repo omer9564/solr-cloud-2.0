@@ -48,20 +48,24 @@ export default class SolrInfoFilters extends React.Component {
 
     render() {
         return <div>
-            {this.state.filters.map((filter, filterIndex) => {
-                const filterOptions = config.SolrInfo.filterTypes[filter.filterType].options;
-                return (
-                    <DynamicFilterBox key={`ReplicaFilter${filterIndex}`}
-                                      filterIndex={filterIndex}
-                                      filterProp={filter.filterProp}
-                                      filterType={filter.filterType}
-                                      filterOperator={filter.filterOperator}
-                                      filterInput={filter.filterInput}
-                                      filterOptions={filterOptions}
-                                      onDelete={this.handleDeleteFilter}
-                                      onChange={this.handleChangeFilter}/>
-                )
-            })}
+            {this.state.filters.length > 0 &&
+            <fieldset className="FormFieldset">
+                <legend>Replica Filters</legend>
+                {this.state.filters.map((filter, filterIndex) => {
+                    const filterOptions = config.SolrInfo.filterTypes[filter.filterType].options;
+                    return (
+                        <DynamicFilterBox key={`ReplicaFilter${filterIndex}`}
+                                          filterIndex={filterIndex}
+                                          filterProp={filter.filterProp}
+                                          filterType={filter.filterType}
+                                          filterOperator={filter.filterOperator}
+                                          filterInput={filter.filterInput}
+                                          filterOptions={filterOptions}
+                                          onDelete={this.handleDeleteFilter}
+                                          onChange={this.handleChangeFilter}/>
+                    )
+                })}
+            </fieldset>}
             <div style={{display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
                 <FormDialog buttonTitle="Add Filter" dialogContent="Choose parameters to filter">
                     <AddFilterDialog onAddFilter={this.handleAddFilter}/>

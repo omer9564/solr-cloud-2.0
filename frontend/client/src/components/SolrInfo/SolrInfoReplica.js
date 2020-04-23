@@ -7,6 +7,12 @@ import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
 import Collapse from "@material-ui/core/Collapse/index";
 import List from "@material-ui/core/List/index";
 import Box from "@material-ui/core/Box/index";
+import TableContainer from "@material-ui/core/TableContainer";
+import Paper from "@material-ui/core/Paper";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import Table from "@material-ui/core/Table";
 
 const stateColor = {
     active_leader: {
@@ -45,12 +51,12 @@ const stateColor = {
 };
 
 function SolrInfoReplica(props) {
-    const {replica,isOpen,isChecked, onClickExpandReplica, onClickCheckReplica} = props;
-    const itemStyle = replica.leader ? stateColor[`${replica.state}_leader`] : stateColor[`${replica.state}_replica`];
+    const {replica, isOpen, isChecked, onClickExpandReplica, onClickCheckReplica} = props;
+    const itemStyle = replica.leader==="true" ? stateColor[`${replica.state}_leader`] : stateColor[`${replica.state}_replica`];
     return (
         <Box key={`ReplicaBox-${replica.replica}`}>
             <ListItem role={undefined} dense button>
-                <ListItemIcon onClick={() => onClickCheckReplica(false,!isChecked)}>
+                <ListItemIcon onClick={() => onClickCheckReplica(false, !isChecked)}>
                     <Checkbox
                         key={`ReplicaItemCheckBox-${replica.replica}`}
                         edge="start"
@@ -60,31 +66,31 @@ function SolrInfoReplica(props) {
                         disableRipple
                     />
                 </ListItemIcon>
-                <ListItemText key={`ReplicaItemText-${replica.replica}`} primary={replica.host} secondary={replica.state} primaryTypographyProps={itemStyle}
-                              onClick={() => onClickCheckReplica(false,!isChecked)}/>
+                <ListItemText key={`ReplicaItemText-${replica.replica}`} primary={replica.node_name}
+                              secondary={replica.state} primaryTypographyProps={itemStyle}
+                              onClick={() => onClickCheckReplica(false, !isChecked)}/>
                 {isOpen ? <ExpandLess key={`ReplicaItemExpand-${replica.replica}`}
-                        onClick={() => onClickExpandReplica()}/> :
+                                      onClick={() => onClickExpandReplica()}/> :
                     <ExpandMore key={`ReplicaItemExpand-${replica.replica}`}
-                        onClick={() => onClickExpandReplica()}/>}
+                                onClick={() => onClickExpandReplica()}/>}
             </ListItem>
             <Collapse in={isOpen} timeout="auto" unmountOnExit>
-                <List style={{paddingLeft: '20px'}}>
-                    {Object.keys(replica).filter(key => typeof replica[key] !== "boolean" && typeof replica[key] !== "object").map(key => {
-                        return (
-                            <ListItem key={`${replica.replica}-${key}`}>
-                                <ListItemText style={{width: "30%"}}
-                                              primaryTypographyProps={{
-                                                  style: {
-                                                      fontWeight: 'bold',
-                                                      paddingRight: '2px'
-                                                  }
-                                              }}
-                                              primary={key}/>
-                                <ListItemText style={{width: "80%"}} primary={replica[key]}/>
-                            </ListItem>
-                        )
-                    })}
-                </List>
+                <TableContainer component={Paper}>
+                    <Table size="small">
+                        {Object.keys(replica).filter(key => typeof replica[key] !== "boolean" && typeof replica[key] !== "object").map(key => {
+                            return (
+                                <TableRow key={`${replica.replica}-${key}`}>
+                                    <TableCell component="th" style={{fontWeight:'bold'}}>
+                                        {key}
+                                    </TableCell>
+                                    <TableCell component="td">
+                                        {replica[key]}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </Table>
+                </TableContainer>
             </Collapse>
         </Box>
     );

@@ -11,25 +11,24 @@ export default class SolrInfo extends Component {
             currentCollection: 0,
             filters: []
         };
-        this.windowRef = React.createRef()
     }
 
 //#region StaticFilterManagement
     onChangeFarm = event => {
-        const newFarmIndex = event.currentTarget.id.split('-')[1];
+        const newFarmIndex = parseInt(event.currentTarget.id.split('-')[1]);
         this.setState({currentFarm: newFarmIndex, currentCollection: 0})
     };
 
     onChangeCollection = event => {
-        const newCollectionIndex = event.currentTarget.id.split('-')[1];
+        const newCollectionIndex = parseInt(event.currentTarget.id.split('-')[1]);
         this.setState({currentCollection: newCollectionIndex});
     };
 //#endregion
 
 //#region DynamicFilterManagement
 
-    onSubmitFilters = (filters) =>{
-        this.setState({filters:[].concat(filters)})
+    onSubmitFilters = (filters) => {
+        this.setState({filters: [].concat(filters)})
     };
 
 //#endregion
@@ -48,7 +47,9 @@ export default class SolrInfo extends Component {
                     <SolrInfoWindow farm={farms[this.state.currentFarm]}
                                     collection={farms[this.state.currentFarm].collections[this.state.currentCollection]}
                                     filters={this.state.filters}/> :
-                    'Waiting for input'}
+                    <div id="ReIndexerWindow" className="TabWindow">
+                        <img src={require("../../WaitingGif.gif")} width="100%" height="100%"/>
+                    </div>}
             </div>
         )
     }

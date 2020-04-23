@@ -29,7 +29,8 @@ class AddFilterDialog extends React.Component {
     };
 
     onSubmit = () => {
-        this.props.onAddFilter(this.state.property, this.state.operator)
+        this.props.onAddFilter(this.state.property, this.state.operator);
+        return {isFinished:true,message:"Filter added successfully"}
     };
 
     render() {

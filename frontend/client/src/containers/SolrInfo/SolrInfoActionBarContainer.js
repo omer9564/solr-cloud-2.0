@@ -43,7 +43,7 @@ export default class SolrInfoActionBarContainer extends Component {
                         disableRipple
                     />
                 </div>
-                <Button onClick={onClickButton}>
+                <Button onClick={onClickButton} variant="outlined" color="primary">
                     Alert Checked Replicas
                 </Button>
             </div>

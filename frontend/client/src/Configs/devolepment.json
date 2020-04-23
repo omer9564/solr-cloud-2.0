@@ -1,45 +1,95 @@
 {
-  "serverURL": "http://localhost:3000",
+  "serverURL": "http://137.135.101.21:8081",
   "farms": [
     {
       "name": "farm_name",
-      "zkHost": "host:port"
+      "zkHost": "137.135.101.21:9983",
+      "solrFarm": "137.135.101.21:8983"
     },
     {
       "name": "farm_name2",
-      "zkHost": "host2:port"
+      "zkHost": "",
+      "solrFarm": "137.135.101.21:8983"
     }
   ],
-  "SolrInfo":{
-    "addFilterSteps":["Filter Property","Filter Operator"],
-    "filterProps":{
-      "CPU":{
-        "type":"number",
-        "allowedOperators":[">","<","=",">=","<=","!="]
+  "SolrInfo": {
+    "addFilterSteps": [
+      "Filter Property",
+      "Filter Operator"
+    ],
+    "filterProps": {
+      "node_name": {
+        "type": "search",
+        "allowedOperators": [
+          "regex",
+          "=",
+          "!="
+        ]
       },
-      "RAM":{
-        "type":"number",
-        "allowedOperators":[">","<","=",">=","<=","!="]
+      "state": {
+        "type": "search",
+        "allowedOperators": [
+          "regex",
+          "=",
+          "!="
+        ]
       },
-      "name":{
-        "type":"search",
-        "allowedOperators":["regex","=","!="]
+      "replica": {
+        "type": "search",
+        "allowedOperators": [
+          "regex",
+          "=",
+          "!="
+        ]
       },
       "leader": {
         "type": "boolSelect",
-        "allowedOperators": ["bool"]
+        "allowedOperators": [
+          "bool"
+        ]
       }
     },
-    "filterTypes":{
-      "number":{
-        "default":0
+    "filterTypes": {
+      "number": {
+        "default": 0
       },
-      "search":{
-        "default":""
+      "search": {
+        "default": ""
       },
       "boolSelect": {
         "default": "true",
-        "options": [true, false]
+        "options": [
+          true,
+          false
+        ]
+      }
+    }
+  },
+  "ReIndexer": {
+    "ComparisionFields": {
+      "Shards": {
+        "default": "Shard name",
+        "rangeOptions": ["All Results","Results Number"],
+        "defaultRangeInput": {
+          "from": "0",
+          "to": "1000"
+        }
+      },
+      "TimeField": {
+        "default": "first_timestamp",
+        "rangeOptions": ["All Results","Time Picker"],
+        "defaultRangeInput": {
+          "start": "11/06/17",
+          "end": "10/02/21"
+        }
+      },
+      "GenericField": {
+        "default": "op_id_uid",
+        "rangeOptions": ["All Results","Results Number"],
+        "defaultRangeInput": {
+          "from": "0",
+          "to": "1000"
+        }
       }
     }
   }

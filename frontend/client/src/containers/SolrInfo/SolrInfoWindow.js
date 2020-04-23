@@ -109,7 +109,7 @@ class SolrInfoWindow extends React.Component {
                 cancelToken: this.source.token,
                 params: {
                     farm: this.props.farm.name,
-                    zkHost: this.props.farm.zkHost,
+                    solrFarm: this.props.farm.solrFarm,
                     collection: this.props.collection
                 },
                 headers: {'Access-Control-Allow-Origin': '*'}
@@ -191,9 +191,9 @@ class SolrInfoWindow extends React.Component {
     getFilteredShards = (shards) => {
         const filteredShards = [];
         shards.forEach((shard) => {
-            let filteredShard = {name: shard.name, replicas: []};
+            const filteredShard = {name: shard.name, replicas: []};
             shard.replicas.forEach((replica) => {
-                let isFilteredReplica = this.checkIsFilteredReplica(replica);
+                const isFilteredReplica = this.checkIsFilteredReplica(replica);
                 if (isFilteredReplica) {
                     filteredShard.replicas.push(replica);
                 }
@@ -208,7 +208,6 @@ class SolrInfoWindow extends React.Component {
 //#endregion
 
     render() {
-        console.log('render');
         return (
             <div className="TabWindow">
                 <List style={{

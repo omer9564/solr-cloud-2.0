@@ -65,11 +65,11 @@ function DynamicFilterBox(props) {
                         })}
                     </Select>
                 </FormControl>)}
-            <div style={{width: "30%", display: "flex", justifyContent: "flex-end"}}>
+            {onDelete && <div style={{width: "30%", display: "flex", justifyContent: "flex-end"}}>
                 <IconButton onClick={() => onDelete(filterIndex)}>
                     <CloseIcon fontSize="large"/>
                 </IconButton>
-            </div>
+            </div>}
         </Box>
     )
 }
