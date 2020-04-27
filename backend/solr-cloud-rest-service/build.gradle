@@ -1,0 +1,47 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'ir.spring.service'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+
+dependencies {
+    //implementation group: 'org.apache.curator', name: 'curator-framework', version: '4.3.0'
+    //implementation group: 'org.apache.curator', name: 'curator-recipes', version: '4.3.0'
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    implementation files("$buildDir/local_dependencies/ZooClient-all-1.0-SNAPSHOT.jar")
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+        implementation("org.springframework.boot:spring-boot-starter-jetty")
+    }
+    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.5.0'
+    implementation group: 'org.json', name: 'json', version: '20180813'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
