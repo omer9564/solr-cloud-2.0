@@ -10,31 +10,47 @@ import org.apache.solr.common.util.NamedList;
 
 import java.util.List;
 
-//TODO: add timeout parameter to the function of performRequest of the class SolrDebugQuery
 //TODO: add logs
+
+/**
+ * currently differ only 2 solr-cloud instances from solr 6.5.1 version
+ */
 public class Differator {
+    private static Differator single_instance = null;
+
+    private Differator(){}
+
+    public static Differator getInstance(){
+        if(single_instance == null){
+            single_instance = new Differator();
+        }
+        return single_instance;
+    }
 
     private void exit(Exception e){
         e.printStackTrace();
         throw new RuntimeException(e);
     }
 
-    public List<DebugResult> shardDiffer(String zkHostA, String zkHostB, String collectionA, String collectionB, String fq) {
-        SolrDebugQuery solrDebugQueryA = new SolrDebugQuery(zkHostA, collectionA);
-        SolrDebugQuery solrDebugQueryB = new SolrDebugQuery(zkHostB, collectionB);
+    public List<DebugResult> shardDiffer(String zkSrc, String zkDst, String collectionSrc, String collectionDst,
+                                         String fq, int queryTimeout, String responseFormat, int httpTimeout,
+                                         int zkConnectTimeout, int zkClientTimeout) {
+        var solrDebugQuerySrc = new SolrDebugQuery(zkSrc, collectionSrc, responseFormat, httpTimeout, zkConnectTimeout,
+                zkClientTimeout);
+        var solrDebugQueryDst = new SolrDebugQuery(zkDst, collectionDst, responseFormat, httpTimeout, zkConnectTimeout,
+                zkClientTimeout);
 
         try {
-            NamedList<Object> responseA = solrDebugQueryA.performRequest(fq);
-            NamedList<Object> responseB = solrDebugQueryB.performRequest(fq);
-            DebugParser parser = new DebugParser(responseA, responseB);
-
-            return parser.getResults();
+            var srcResponse = solrDebugQuerySrc.performRequest(fq, queryTimeout);
+            var dstResponse = solrDebugQueryDst.performRequest(fq, queryTimeout);
+            var parser = new DebugParser();
+            return parser.getResults(srcResponse, dstResponse);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                solrDebugQueryA.close();
-                solrDebugQueryB.close();
+                solrDebugQuerySrc.close();
+                solrDebugQueryDst.close();
             } catch (Exception e) {
                 exit(e);
             }
@@ -42,28 +58,36 @@ public class Differator {
         return null;
     }
 
-    public List<DebugResult> shardDiffer(String zkHostA, String zkHostB, String collectionA, String collectionB) {
-        return shardDiffer(zkHostA, zkHostB, collectionA, collectionB, "");
+    public List<DebugResult> shardDiffer(String zkSrc, String zkDst, String collectionSrc, String collectionDst) {
+        return shardDiffer(zkSrc, zkDst, collectionSrc, collectionDst, "", 60000, "json",
+                60000, 10000, 1000);
     }
 
-    public List<FacetResult> timeFieldDiffer(String zkHostA, String zkHostB, String collectionA, String collectionB, String fq,
-                                             String fieldName, String start, String end, String gap) {
-        SolrJsonFacetQuery solrJsonFacetQueryA = new SolrJsonFacetQuery(zkHostA, collectionA);
-        SolrJsonFacetQuery solrJsonFacetQueryB = new SolrJsonFacetQuery(zkHostB, collectionB);
-        try{
-            NamedList<Object> responseA = solrJsonFacetQueryA.performRequest(fieldName, start, end, gap, fq);
-            NamedList<Object> responseB = solrJsonFacetQueryB.performRequest(fieldName, start, end, gap, fq);
-            JsonFacetParser parser = new JsonFacetParser(responseA, responseB);
+    private int getGap(String gap){
+        String onlyNum = gap.replaceAll("\\D+","");
+        return Integer.parseInt(onlyNum);
+    }
 
-            return parser.getResults();
+    public List<FacetResult> timeFieldDiffer(String zkSrc, String zkDst, String collectionSrc, String collectionDst, String fq,
+                                             String fieldName, String start, String end, String gap, int queryTimeout,
+                                             String responseFormat, int httpTimeout, int zkConnectTimeout, int zkClientTimeout) {
+        var solrJsonFacetQuerySrc = new SolrJsonFacetQuery(zkSrc, collectionSrc, responseFormat, httpTimeout, zkConnectTimeout,
+                zkClientTimeout);
+        var solrJsonFacetQueryDst = new SolrJsonFacetQuery(zkDst, collectionDst, responseFormat, httpTimeout, zkConnectTimeout,
+                zkClientTimeout);
+        try{
+            var srcResponse = solrJsonFacetQuerySrc.performRequest(fieldName, start, end, gap, fq, queryTimeout);
+            var dstResponse = solrJsonFacetQueryDst.performRequest(fieldName, start, end, gap, fq, queryTimeout);
+            var parser = new JsonFacetParser();
+            return parser.getResults(srcResponse, dstResponse, getGap(gap));
         }
         catch (Exception e){
             e.printStackTrace();
         }
         finally {
             try {
-                solrJsonFacetQueryA.close();
-                solrJsonFacetQueryB.close();
+                solrJsonFacetQuerySrc.close();
+                solrJsonFacetQueryDst.close();
             }
             catch (Exception e){
                 exit(e);
@@ -72,33 +96,43 @@ public class Differator {
         return null;
     }
 
-    public static void main(String[] args) {
+    public List<FacetResult> timeFieldDiffer(String zkSrc, String zkDst, String collectionSrc, String collectionDst, String fq,
+                                             String fieldName, String start, String end, String gap){
+        return timeFieldDiffer(zkSrc, zkDst, collectionSrc, collectionDst, fq, fieldName, start, end, gap, 60000,
+                "json", 60000, 10000, 1000);
+    }
 
-        Differator differator = new Differator();
-
-        String zkHostA = "solr-app:31775";
-        String zkHostB = "solr-app:31775";
-        String collectionA = "collectionA";
-        String collectionB = "collectionB";
+    public static void shardExample(Differator differator, String zkSrc, String zkDst, String collectionSrc,
+                                     String collectionDst){
         //String fq = "first_timestamp:[2017-01-01T00:00:00Z TO 2017-04-01T00:00:00Z]";
-        String fq = "";
-        String fieldName = "first_timestamp";
-        String start = "2013-06-04T00:00:00Z";
-        String end = "2020-03-01T00:00:00Z";
-        String gap = "+1DAY";
-
-
-        /*List<DebugResult> results = IR.differator.shardDiffer(zkHostA, zkHostB, collectionA, collectionB);
-        //List<DebugResult> results = IR.differator.shardDiffer(zkHostA, zkHostB, collectionA, collectionB, fq);
+        List<DebugResult> results = differator.shardDiffer(zkSrc, zkDst, collectionSrc, collectionDst);
         for (DebugResult result : results) {
-            System.out.println(result.toString());
-        }*/
+            System.out.println(result.toJson());
+        }
+    }
 
-        List<FacetResult> results = differator.timeFieldDiffer(zkHostA, zkHostB, collectionA, collectionB,
+    public static void timeExample(Differator differator, String zkSrc, String zkDst, String collectionSrc,
+                                   String collectionDst){
+        String fq = "";
+        String fieldName = "first_timestamp_tdt";
+        String start = "2017-06-03T00:00:00Z";
+        String end = "2017-06-05T00:00:00Z";
+        String gap = "+1DAY";
+        List<FacetResult> results = differator.timeFieldDiffer(zkSrc, zkDst, collectionSrc, collectionDst,
                 fq, fieldName, start, end, gap);
         for(FacetResult result : results){
-            System.out.println(result.toString());
+            System.out.println(result.toJson());
         }
+    }
 
+    public static void main(String[] args) {
+        Differator differator = new Differator();
+        String zkSrc = "localhost:9983";
+        String zkDst = "localhost:9983";
+        String collectionSrc = "gettingstarted";
+        String collectionDst = "gettingstarted";
+
+        //shardExample(differator, zkSrc, zkDst, collectionSrc, collectionDst);
+        timeExample(differator, zkSrc, zkDst, collectionSrc, collectionDst);
     }
 }

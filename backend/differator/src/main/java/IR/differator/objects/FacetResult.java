@@ -3,29 +3,23 @@ package IR.differator.objects;
 import org.json.JSONObject;
 
 public class FacetResult {
-    private Day daySrc;
-    private Day dayDst;
+    private Interval srcInterval;
+    private Interval dstInterval;
 
-    private static String START_DAY = "StartDay: ";
-    private static String END_DAY = "EndDay: ";
-    private static String COMMA = ",";
-    private static String TAB = "\t";
-    private static String NUM_SRC = "NumInSrc: ";
-    private static String NUM_DST = "NumInDst: ";
+    private static String FIELD = "field";
+    private static String SRC = "src";
+    private static String DST = "dst";
+    private static String DIFF = "diff";
 
-    private static String EQUAL = "src is equal to dst";
-    private static String GREATER = "src is greater than dst in: ";
-    private static String SMALLER = "src is smaller than dst in: ";
-
-
-    public FacetResult(Day daySrc, Day dayDst){
-        this.daySrc = daySrc;
-        this.dayDst = dayDst;
+    public FacetResult(Interval srcInterval, Interval dstInterval){
+        this.srcInterval = srcInterval;
+        this.dstInterval = dstInterval;
     }
 
     @Override
     public String toString() {
-        String PREFIX = START_DAY + daySrc.getDate() + TAB + END_DAY + daySrc.getNextDate() + TAB
+        return null;
+        /*String PREFIX = START_DAY + daySrc.getDate() + TAB + END_DAY + daySrc.getNextDate() + TAB
                 + NUM_SRC + daySrc.getNumDocs() + TAB + NUM_DST + dayDst.getNumDocs();
 
         String TMP_SUFFIX = (daySrc.getNumDocs() > dayDst.getNumDocs()) ?
@@ -35,15 +29,18 @@ public class FacetResult {
         String SUFFIX = (daySrc.getNumDocs() != dayDst.getNumDocs()) ?
                 TMP_SUFFIX : EQUAL;
 
-        return PREFIX + TAB + SUFFIX;
+        return PREFIX + TAB + SUFFIX;*/
     }
 
     public JSONObject toJson(){
-        JSONObject result = new JSONObject();
-        result.put(START_DAY, daySrc.getDate());
-        result.put(END_DAY, daySrc.getNextDate());
-        result.put(NUM_SRC, daySrc.getNumDocs());
-        result.put(NUM_DST, dayDst.getNumDocs());
+        var intervalAsString = srcInterval.getIntervalAsString();
+        var srcDocNum = srcInterval.getNumDocs();
+        var dstDocNum = dstInterval.getNumDocs();
+        var result = new JSONObject();
+        result.put(FIELD, intervalAsString);
+        result.put(SRC, srcDocNum);
+        result.put(DST, dstDocNum);
+        result.put(DIFF, srcDocNum - dstDocNum);
         return result;
     }
 }

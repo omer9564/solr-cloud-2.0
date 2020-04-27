@@ -1,17 +1,21 @@
 package IR.differator.parsers;
 
-import IR.differator.objects.Day;
 import IR.differator.objects.FacetResult;
+import IR.differator.objects.Interval;
 import org.apache.solr.common.util.NamedList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JsonFacetParser {
-    private NamedList<Object> responseA;
-    private NamedList<Object> responseB;
+    private static SimpleDateFormat format;
+    private static Calendar calendar;
 
     private static String RESPONSE = "response";
     private static String FACETS = "facets";
@@ -20,54 +24,75 @@ public class JsonFacetParser {
     private static String VAL = "val";
     private static String COUNT = "count";
 
-    public JsonFacetParser(NamedList<Object> responseA, NamedList<Object> responseB) {
-        this.responseA = responseA;
-        this.responseB = responseB;
-
+    public JsonFacetParser(){
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        calendar = Calendar.getInstance();
     }
 
     private JSONArray getBucketsSection(NamedList<Object> response) {
-        String stringToParse = response.get(RESPONSE).toString();
+        var stringToParse = response.get(RESPONSE).toString();
         return new JSONObject(stringToParse).getJSONObject(FACETS).getJSONObject(TIMES).getJSONArray(BUCKETS);
     }
 
-    private List<Day> getDays(JSONArray bucketSection) {
-        List<Day> days = new ArrayList<>();
+    private Date getStartDate(String startDate) throws ParseException {
+        return format.parse(startDate);
+    }
 
+    private Date getEndDate(String startDate, int gap) throws ParseException{
+        calendar.setTime(format.parse(startDate));
+        calendar.add(Calendar.DATE, gap);
+        return calendar.getTime();
+    }
+
+    private String getEndDateAsString(String startDate, int gap) throws ParseException{
+        calendar.setTime(format.parse(startDate));
+        calendar.add(Calendar.DATE, gap);
+        return format.format(calendar.getTime());
+    }
+
+    private List<Interval> getIntervals(JSONArray bucketSection, int gap) throws ParseException{
+        List<Interval> intervals = new ArrayList<>();
         int length = bucketSection.length();
         for (int i = 0; i < length; i++) {
             JSONObject bucket = bucketSection.getJSONObject(i);
-            Day day = new Day(bucket.getString(VAL), bucket.getInt(COUNT));
-            days.add(day);
+
+            String startDate = bucket.getString(VAL);
+            String endDate = getEndDateAsString(startDate, gap);
+            Date start = getStartDate(startDate);
+            Date end = getEndDate(startDate, gap);
+            int numDocs = bucket.getInt(COUNT);
+
+            Interval interval = new Interval(start, end, startDate, endDate, numDocs);
+            intervals.add(interval);
         }
 
-        return days;
+        return intervals;
     }
 
-    private void sortDays(List<Day> days) {
-        days.sort(Day::compareTo);
+    private void sortIntervals(List<Interval> intervals){
+        intervals.sort(Interval::compareTo);
     }
 
-    private List<FacetResult> createResults(List<Day> daysA, List<Day> daysB) {
+    private List<FacetResult> createResults(List<Interval> srcIntervals, List<Interval> dstIntervals) {
         List<FacetResult> facetResults = new ArrayList<>();
-        int length = daysA.size();
+        int length = srcIntervals.size();
         for (int i = 0; i < length; i++) {
-            facetResults.add(new FacetResult(daysA.get(i), daysB.get(i)));
+            facetResults.add(new FacetResult(srcIntervals.get(i), dstIntervals.get(i)));
         }
         return facetResults;
     }
 
-    public List<FacetResult> getResults() {
-        JSONArray bucketSectionA = getBucketsSection(responseA);
-        JSONArray bucketSectionB = getBucketsSection(responseB);
+    public List<FacetResult> getResults(NamedList<Object> srcResponse, NamedList<Object> dstResponse, int gap) throws ParseException {
+        var srcBucketSection = getBucketsSection(srcResponse);
+        var dstBucketSection = getBucketsSection(dstResponse);
 
-        List<Day> daysA = getDays(bucketSectionA);
-        List<Day> daysB = getDays(bucketSectionB);
+        var srcIntervals = getIntervals(srcBucketSection, gap);
+        var dstIntervals = getIntervals(dstBucketSection, gap);
 
-        sortDays(daysA);
-        sortDays(daysB);
+        sortIntervals(srcIntervals);
+        sortIntervals(dstIntervals);
 
-        return createResults(daysA, daysB);
+        return createResults(srcIntervals, dstIntervals);
     }
 
 

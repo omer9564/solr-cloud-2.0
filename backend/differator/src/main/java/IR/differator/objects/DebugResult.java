@@ -7,10 +7,13 @@ public class DebugResult {
     private Shard shardSrc;
     private Shard shardDst;
 
+    private static String FIELD = "field";
+    private static String SRC = "src";
+    private static String DST = "dst";
+    private static String DIFF = "diff";
+
     private static String SHARD_PREFIX = "shard: ";
     private static String COMMA = ",";
-    private static String SRC = "src: ";
-    private static String DST = "dst: ";
     private static String EQUAL = "src is equal to dst";
     private static String GREATER = "src is greater than dst in: ";
     private static String SMALLER = "src is smaller than dst in: ";
@@ -35,11 +38,39 @@ public class DebugResult {
         return PREFIX + TAB + SUFFIX;
     }
 
+    /**
+     * our result to the frontend should look like this -
+     *      [
+     *          {
+     *              "field": "shard1",
+     * 		        "src": "1048",
+     * 		        "dst": "1048",
+     * 		        "diff" : 0
+     *          },
+     *          {
+     *              "field": "shard2",
+     * 		        "src": "10485",
+     * 		        "dst": "10486",
+     * 		        "diff" : -1
+     *          },
+     *          {
+     *              "field": "shard3",
+     * 		        "src": "10483",
+     * 		        "dst": "10482",
+     * 		        "diff" : 0
+     *          },
+     *      ]
+     * notice that the diff value is always src - dst
+     * @return
+     */
     public JSONObject toJson(){
-        JSONObject result = new JSONObject();
-        result.put(SHARD_PREFIX, shardSrc.getName());
-        result.put(SRC, shardSrc.getNumDocs());
-        result.put(DST, shardDst.getNumDocs());
+        var srcDocNum = shardSrc.getNumDocs();
+        var dstDocNum = shardDst.getNumDocs();
+        var result = new JSONObject();
+        result.put(FIELD, shardSrc.getName());
+        result.put(SRC, srcDocNum);
+        result.put(DST, dstDocNum);
+        result.put(DIFF, srcDocNum - dstDocNum);
         return result;
     }
 
