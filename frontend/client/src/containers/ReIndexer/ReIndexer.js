@@ -4,12 +4,13 @@ import ReactDOM from "react-dom";
 import Root from "../Root";
 import SolrInfoWindow from "../SolrInfo/SolrInfoWindow";
 import config from "../../Config";
+import ReIndexerWindow from "./ReIndexerWindow";
 
 
 export default class ReIndexer extends Component {
     constructor(props) {
         super(props);
-        const type = Object.keys(config.ReIndexer.ComparisionFields)[0];
+        const type = Object.keys(config.ReIndexer.ComparisonFields)[0];
         this.state = {
             sourceProps: {
                 farm: 0,
@@ -21,15 +22,15 @@ export default class ReIndexer extends Component {
             },
             fieldProps: {
                 type: type,
-                field: config.ReIndexer.ComparisionFields[type].default,
-                rangeOption: config.ReIndexer.ComparisionFields[type].rangeOptions[0],
+                field: config.ReIndexer.ComparisonFields[type].default,
+                rangeOption: config.ReIndexer.ComparisonFields[type].rangeOptions[0],
                 rangePicker: {}
             },
             submitted: false
         };
     }
 
-//#region StaticComparisionManagement
+//#region StaticComparisonManagement
     onChangeFarm = (type, event) => {
         const newFarmIndex = parseInt(event.currentTarget.id.split('-')[1]);
         const tempState = this.state;
@@ -45,14 +46,20 @@ export default class ReIndexer extends Component {
     };
 //#endregion
 
-//#region ComparisionFieldManagement
+//#region ComparisonFieldManagement
 
     onChangeFieldProperties = (newProps) => {
-        this.setState({fieldProps:newProps})
+        this.setState({fieldProps: newProps})
     };
 
-    onSubmitComparision = () => {
-        this.setState({submitted: true})
+    onSubmitComparison = () => {
+        if (this.props.farms[this.state.sourceProps.farm].collections.length > 0 &&
+            this.props.farms[this.state.destinationProps.farm].collections.length > 0) {
+            this.setState({submitted: true})
+        } else {
+            this.setState({submitted: false});
+            alert("Invalid collections")
+        }
     };
 
 //#endregion
@@ -68,11 +75,13 @@ export default class ReIndexer extends Component {
                                onRefreshCollection={onRefreshCollection}
                                onChangeFieldProperties={this.onChangeFieldProperties}
                                currentFieldProps={JSON.parse(JSON.stringify(this.state.fieldProps))}
-                               onSubmitComparation={this.onSubmitComparision}/>
+                               onSubmitComparison={this.onSubmitComparison}/>
                 {this.state.submitted ?
-                    <SolrInfoWindow farm={this.props.farms[this.state.sourceProps.farm]}
-                                    collection={this.props.farms[this.state.sourceProps.farm].collections[this.state.sourceProps.farm]}
-                                    filters={[]}/> :
+                    <ReIndexerWindow sourceFarm={this.props.farms[this.state.sourceProps.farm]}
+                                     sourceCollection={this.props.farms[this.state.sourceProps.farm].collections[this.state.sourceProps.collection]}
+                                     destinationFarm={this.props.farms[this.state.destinationProps.farm]}
+                                     destinationCollection={this.props.farms[this.state.destinationProps.farm].collections[this.state.destinationProps.collection]}
+                                     fieldProps={this.state.fieldProps}/> :
                     <div id="ReIndexerWindow" className="TabWindow">
                         <img src={require("../../WaitingGif.gif")} width="100%" height="100%"/>
                     </div>}

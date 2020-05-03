@@ -26,7 +26,7 @@ function TimeFieldSelect(props) {
 
     return (
         <div>
-            <FormControl style={{padding: "10px"}}>
+            <FormControl style={{padding: "10px",width:"100%"}}>
                 <TextField
                     id={`${textPropName}`}
                     label={textPropName}
@@ -39,7 +39,7 @@ function TimeFieldSelect(props) {
             </FormControl>
             <RadioButtonsGroup labelPlacement="top" options={rangeOptions} value={rangeOption}
                                handleChangeRadio={onChangeRangeOption}/>
-            {rangeOption === "Time Picker" &&
+            {rangeOption !== "All Results" &&
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <div style={{display:"flex",flexDirection:"column",justifyContent:"space-around"}}>
                     <KeyboardDatePicker

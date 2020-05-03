@@ -21,6 +21,30 @@ app.get('/collections', (req,res) => {
     res.send(collections);
 });
 
+app.get('/compare', (req,res) => {
+    const shardC = [
+        {
+            "field":"shard1",
+            "src":"1048",
+            "dst":"1048",
+            "diff":0
+        },
+        {
+            "field":"shard2",
+            "src":"10485",
+            "dst":"10486",
+            "diff":-1
+        },
+        {
+            "field":"shard3",
+            "src":"10483",
+            "dst":"10482",
+            "diff":1
+        }
+    ];
+    res.send(shardC);
+});
+
 app.post('/logger', (req, res) => {
     console.log(req.body);
 

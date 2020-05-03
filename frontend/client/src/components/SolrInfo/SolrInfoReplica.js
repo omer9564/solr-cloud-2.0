@@ -5,13 +5,11 @@ import Checkbox from "@material-ui/core/Checkbox/index";
 import ListItemText from "@material-ui/core/ListItemText/index";
 import {ExpandLess, ExpandMore} from "@material-ui/icons/index";
 import Collapse from "@material-ui/core/Collapse/index";
-import List from "@material-ui/core/List/index";
 import Box from "@material-ui/core/Box/index";
-import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
+import TableContainer from "@material-ui/core/TableContainer";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 
 const stateColor = {

@@ -3,17 +3,17 @@ import config from "../../Config"
 import RadioButtonsGroup from "../../components/RadioButtonsGroup";
 import DynamicFieldSelectDialog from "../../components/ReIndexer/DynamicFieldSelectDialog";
 
-export default class ChangeComparisionFieldDialog extends React.Component {
+export default class ChangeComparisonFieldDialog extends React.Component {
     constructor(props) {
         super(props);
-        const type = Object.keys(config.ReIndexer.ComparisionFields)[0];
+        const type = Object.keys(config.ReIndexer.ComparisonFields)[0];
         this.state = {
             type: type,
-            field: config.ReIndexer.ComparisionFields[type].default,
-            rangeOption: config.ReIndexer.ComparisionFields[type].rangeOptions[0],
+            field: config.ReIndexer.ComparisonFields[type].default,
+            rangeOption: config.ReIndexer.ComparisonFields[type].rangeOptions[0],
             rangePicker: {
-                start: config.ReIndexer.ComparisionFields[type].defaultRangeInput.start,
-                end: config.ReIndexer.ComparisionFields[type].defaultRangeInput.end
+                start: config.ReIndexer.ComparisonFields[type].defaultRangeInput.start,
+                end: config.ReIndexer.ComparisonFields[type].defaultRangeInput.end
             }
         };
     }
@@ -22,9 +22,9 @@ export default class ChangeComparisionFieldDialog extends React.Component {
         const type = event.target.value;
         this.setState({
             type: type,
-            field: config.ReIndexer.ComparisionFields[type].default,
-            rangeOption: config.ReIndexer.ComparisionFields[type].rangeOptions[0],
-            rangePicker: config.ReIndexer.ComparisionFields[type].defaultRangeInput
+            field: config.ReIndexer.ComparisonFields[type].default,
+            rangeOption: config.ReIndexer.ComparisonFields[type].rangeOptions[0],
+            rangePicker: config.ReIndexer.ComparisonFields[type].defaultRangeInput
         })
     };
 
@@ -38,9 +38,12 @@ export default class ChangeComparisionFieldDialog extends React.Component {
 
     handleChangeRangePicker = (rangeType, newValue) => {
         const tempRangePicker = JSON.parse(JSON.stringify(this.state.rangePicker));
-        console.log(newValue.toString("dd/MM/yyyy"));
-        debugger;
-        tempRangePicker[rangeType] = newValue;
+        if (rangeType==="both"){
+            tempRangePicker.start=newValue[0];
+            tempRangePicker.end=newValue[1];
+        }else{
+            tempRangePicker[rangeType] = newValue;
+        }
         this.setState({rangePicker: tempRangePicker})
     };
 
@@ -55,8 +58,8 @@ export default class ChangeComparisionFieldDialog extends React.Component {
 
     render() {
         const {onChangeField} = this.props;
-        const fieldTypes = Object.keys(config.ReIndexer.ComparisionFields);
-        const rangeOptions = config.ReIndexer.ComparisionFields[this.state.type].rangeOptions;
+        const fieldTypes = Object.keys(config.ReIndexer.ComparisonFields);
+        const rangeOptions = config.ReIndexer.ComparisonFields[this.state.type].rangeOptions;
         return (
             <div>
                 <RadioButtonsGroup labelPlacement="top"

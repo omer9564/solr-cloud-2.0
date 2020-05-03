@@ -126,7 +126,7 @@ class Root extends React.Component {
             return []
         });
         const tempFarms = this.state.farms;
-        tempFarms[farmIndex].collections = collectionsResponse;
+        tempFarms[farmIndex].collections = ["gettingstarted","Cloud"];
         tempFarms[farmIndex].isLoadingCollections = collectionsResponse.length !== 0 ? 0 : -1;
         this.setState({farms: tempFarms});
     };
@@ -135,6 +135,7 @@ class Root extends React.Component {
     handleChange = (event, newValue) => {
         this.setState({currentTab: newValue});
     };
+
     render() {
         const {classes} = this.props;
         const value = this.state.currentTab;
